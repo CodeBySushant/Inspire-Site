@@ -1,1 +1,1 @@
-Official site for Inspire Club Manit
+Official website for Inspire Club Manit
