@@ -1,75 +1,64 @@
-
 const express = require("express");
 const app = express();
-const port = 8080;
-const cors = require('cors');
-const Image = require('./models/Images.js');
-const Member = require('./models/Members.js');
-const Alumni = require('./models/Alumnis.js');
-const mongoose  = require('mongoose');
+const cors = require("cors");
+const Image = require("./models/Images.js");
+const Member = require("./models/Members.js");
+const Alumni = require("./models/Alumnis.js");
+const mongoose = require("mongoose");
 const path = require("path");
-require('dotenv').config({ path: path.join(__dirname, '.env') });
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 
-// Point this to your build folder (usually 'dist' or 'build')
-app.use(express.static(path.join(__dirname, '../client/dist')));
+// Serve frontend build (optional if you deploy frontend separately)
+app.use(express.static(path.join(__dirname, "../client/dist")));
 
-// Ensure all other routes return the index.html (for SPA routing)
-// app.get('(.*)', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'dist', '../client/dist/index.html'));
-// });
+// CORS (allow all for now)
+app.use(cors({ origin: "*" }));
 
-const corsOptions = {
-    origin : ["http://localhost:5173"]
-}
+// Railway PORT
+const PORT = process.env.PORT || 8080;
 
-app.use(cors(corsOptions));
+// MongoDB URI from Railway Variables
+const dbUrl = process.env.MONGO_URI;
 
-//📌 Establishing connection with DB
-const dbUrl = process.env.ATLASDB_URL;
+// ---------------- CONNECT DATABASE ----------------
+mongoose
+  .connect(dbUrl)
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch((err) => console.error("❌ MongoDB error:", err));
 
-main().then(()=>{
-    console.log("Connected to DB successfully.");
-}).catch(err=>{
-    console.log(err);
-})
-async function main(){
-    await mongoose.connect(dbUrl);
-}
+// ---------------- ROUTES ----------------
 
+app.get("/gallery", async (req, res) => {
+  try {
+    const imageData = await Image.find({});
+    res.json(imageData);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch images" });
+  }
+});
 
-app.get("/gallery",async (req,res)=>{
-    try {
-        const imageData = await Image.find({});
-        console.log("Found images:", imageData.length); // Good for debugging
-        res.json(imageData); 
-    } catch (err) {
-        res.status(500).json({ error: "Failed to fetch images" });
-    }
-})
+app.get("/members", async (req, res) => {
+  try {
+    const memberData = await Member.find({});
+    res.json(memberData);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch members" });
+  }
+});
 
+app.get("/alumni", async (req, res) => {
+  try {
+    const alumniData = await Alumni.find({});
+    res.json(alumniData);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch alumni" });
+  }
+});
 
-app.get("/members",async (req,res)=>{
-    try{
-        const memberData = await Member.find({});
-        console.log("Found members : ",memberData.length);
-        res.json(memberData);
-    } catch(err){
-        res.status(500).json({error:"Failed to fetch members' data"});
-    }
-})
-app.get("/alumni",async (req,res)=>{
-    try{
-        const alumniData = await Alumni.find({});
-        console.log("Found members : ",alumniData.length);
-        res.json(alumniData);
-    } catch(err){
-        res.status(500).json({error:"Failed to fetch members' data"});
-    }
-})
+// ---------------- START SERVER ----------------
 
-app.listen(port, ()=>{
-    console.log(`App is running on port : ${port}`);
-
-})
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
 
 module.exports = app;
