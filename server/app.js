@@ -8,25 +8,27 @@ const mongoose = require("mongoose");
 const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
-// Serve frontend build (optional if you deploy frontend separately)
+// Serve frontend build (optional)
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
-// CORS (allow all for now)
+// Allow all origins (production safe for now)
 app.use(cors({ origin: "*" }));
 
-// Railway PORT
-const PORT = process.env.PORT || 8080;
+// ---------------- HEALTH CHECK ----------------
+app.get("/", (req, res) => {
+  res.send("Backend is running ✅");
+});
 
-// MongoDB URI from Railway Variables
-const dbUrl = process.env.MONGO_URI;
+// ---------------- DATABASE ----------------
 
-// ---------------- CONNECT DATABASE ----------------
+const MONGO_URI = process.env.MONGO_URI;
+
 mongoose
-  .connect(dbUrl)
+  .connect(MONGO_URI)
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch((err) => console.error("❌ MongoDB error:", err));
 
-// ---------------- ROUTES ----------------
+// ---------------- API ROUTES ----------------
 
 app.get("/gallery", async (req, res) => {
   try {
@@ -57,7 +59,14 @@ app.get("/alumni", async (req, res) => {
 
 // ---------------- START SERVER ----------------
 
-app.listen(PORT, () => {
+const PORT = process.env.PORT;
+
+if (!PORT) {
+  console.error("❌ Railway PORT missing");
+  process.exit(1);
+}
+
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
 
