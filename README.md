@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🏛️ INSPIRE Official Website
 A full-stack web application built for INSPIRE at [College Name].
 
@@ -26,3 +27,6 @@ Briefly explain where the main code lives:
    ```bash
    cd server
    npm install
+=======
+Official website for Inspire Club Manit
+>>>>>>> f6b62cd4003a67df854b28881d9eb45179b1e6a3
