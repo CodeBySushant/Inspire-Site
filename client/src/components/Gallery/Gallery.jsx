@@ -11,7 +11,7 @@ export default function Gallery() {
   const [imageData, setImageData] = useState([]);
   useEffect(() => {
     const getData = async () => {
-      const data = await fetch("http://localhost:8080/gallery");
+      const data = await fetch("inspire-site-production.up.railway.app/gallery");
       const jsonData = await data.json();
       setImageData(jsonData);
     };

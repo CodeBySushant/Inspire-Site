@@ -8,7 +8,7 @@ export default function OurMembers() {
   useEffect(() => {
     const getMembers = async () => {
       try {
-        const res = await fetch("http://localhost:8080/members");
+        const res = await fetch("inspire-site-production.up.railway.app/members");
         const dataJson = await res.json();
         setMembersData(dataJson);
       } catch (err) {
