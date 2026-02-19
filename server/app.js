@@ -18,11 +18,12 @@ app.use(express.static(path.join(__dirname, '../client/dist')));
 //   res.sendFile(path.join(__dirname, 'dist', '../client/dist/index.html'));
 // });
 
-const corsOptions = {
-    origin : ["faithful-presence-production.up.railway.app"]
-}
-
-app.use(cors(corsOptions));
+// This allows your frontend to actually talk to this backend
+app.use(cors({
+  origin: ["https://www.inspiremanit.in", "https://faithful-presence-production.up.railway.app"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
 //📌 Establishing connection with DB
 const dbUrl = process.env.ATLASDB_URL;
